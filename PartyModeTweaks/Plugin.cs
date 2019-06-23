@@ -16,7 +16,7 @@ namespace PartyModeTweaks
     public class Plugin : IPlugin
     {
         public string Name => "Party Mode Tweaks";
-        public string Version => "0.0.1";
+        public string Version => "0.0.2";
 
         public void OnApplicationStart()
         {

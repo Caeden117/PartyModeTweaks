@@ -32,8 +32,8 @@ namespace PartyModeTweaks
         void Update()
         {
             if (!setUp) return;
-            GameObject[] buycontainers = FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(g => g.name == "BuyContainer").ToArray();
-            foreach (GameObject buycontainer in buycontainers) buycontainer.SetActive(!isEnabled);
+            GameObject[] filteredButtons = FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(g => g.name == "BuyContainer" || g.name == "ClearLocalLeaderboardsButton").ToArray();
+            foreach (GameObject button in filteredButtons) button.SetActive(!isEnabled);
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 ToggleLeftScreen(isEnabled);
