@@ -12,7 +12,9 @@ namespace PartyModeTweaks
         static PartyModeTweaksGameObject Instance;
 
         private Vector3 LeftScreenPosition;
+        private Vector3 RightScreenPosition;
 
+        private bool rightScreenVisible = false;
         private bool setUp = false;
         private bool isEnabled = false;
 
@@ -32,13 +34,20 @@ namespace PartyModeTweaks
         void Update()
         {
             if (!setUp) return;
+            //Definitely a better way to do this but ¯\_(ツ)_/¯
             GameObject[] filteredButtons = FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(g => g.name == "BuyContainer" || g.name == "ClearLocalLeaderboardsButton").ToArray();
             foreach (GameObject button in filteredButtons) button.SetActive(!isEnabled);
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 ToggleLeftScreen(isEnabled);
+                ToggleRightScreen(isEnabled);
                 StartCoroutine(WaitForLevelSelectionNavigationController(isEnabled));
                 isEnabled = !isEnabled;
+            }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                rightScreenVisible = !rightScreenVisible;
+                ToggleRightScreen(rightScreenVisible);
             }
         }
 
@@ -58,8 +67,11 @@ namespace PartyModeTweaks
             if (buttonType == MainMenuViewController.MenuButton.Party)
             {
                 GameObject leftScreen = GameObject.Find("LeftScreen");
+                GameObject rightScreen = GameObject.Find("RightScreen");
                 LeftScreenPosition = leftScreen.transform.position;
-                leftScreen.transform.position -= new Vector3(0, 100, 0); //"If it works it's not stupid" ~Caeden117
+                RightScreenPosition = rightScreen.transform.position;
+                ToggleLeftScreen(false);
+                ToggleRightScreen(false);
                 StartCoroutine(WaitForLevelSelectionNavigationController(false));
                 setUp = true;
                 isEnabled = true;
@@ -69,8 +81,17 @@ namespace PartyModeTweaks
         private void ToggleLeftScreen(bool visible)
         {
             GameObject leftScreen = GameObject.Find("LeftScreen");
-            if (visible) leftScreen.transform.position = LeftScreenPosition;
-            else leftScreen.transform.position = new Vector3(0, -100, 0);
+            if (visible)
+                leftScreen.transform.position = LeftScreenPosition;
+            else leftScreen.transform.position = new Vector3(0, -100, 0); //"If it works it's not stupid" ~Caeden117
+        }
+
+        private void ToggleRightScreen(bool visible)
+        {
+            GameObject rightScreen = GameObject.Find("RightScreen");
+            if (visible || rightScreenVisible)
+                rightScreen.transform.position = RightScreenPosition;
+            else rightScreen.transform.position = new Vector3(0, -100, 0); //"If it works it's not stupid" ~Caeden117
         }
 
         private IEnumerator WaitForLevelSelectionNavigationController(bool enabled)
